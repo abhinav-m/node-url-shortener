@@ -1,3 +1,5 @@
+require('./config/config');
+
 const path = require('path');
 const fs = require('fs');
 
@@ -26,6 +28,7 @@ app.use(express.static(path.join(__dirname, '../public')));
 
 app.get('/:id', (req, res) => {
   // TODO: Fetch shortened url from db.
+  // If it doesn't exist send back response (url doesnt exist in database.)
   const id = req.params.id;
   res.status(200).send(id);
 });
