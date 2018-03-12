@@ -1,0 +1,33 @@
+{
+  "name": "url-shortener",
+  "version": "1.0.0",
+  "description": "A simple api which shortens a url and returns result as json.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/abhinav-m/node-url-shortener.git"
+  },
+  "keywords": [
+    "url",
+    "shortener",
+    "api"
+  ],
+  "author": "Abhinav Mishra",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/abhinav-m/node-url-shortener/issues"
+  },
+  "homepage": "https://github.com/abhinav-m/node-url-shortener#readme",
+  "dependencies": {
+    "express": "^4.16.2",
+    "mongodb": "^3.0.4"
+  },
+  "devDependencies": {
+    "eslint": "^4.18.2",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-plugin-import": "^2.9.0"
+  }
+}
