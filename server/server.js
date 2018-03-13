@@ -1,11 +1,10 @@
-require('./config/config');
+require('./config/config.js');
 
 const path = require('path');
 const fs = require('fs');
-const { MongoClient } = require('mongodb');
 
-// const bodyParser = require('body-parser');
 const express = require('express');
+const { isWebUri } = require('valid-url');
 
 const app = express();
 
@@ -28,17 +27,24 @@ app.use((req, res, next) => {
 app.use(express.static(path.join(__dirname, '../public')));
 
 app.get('/:id', (req, res) => {
-  // TODO: Fetch shortened url from db.
-  // If it doesn't exist send back response (url doesnt exist in database.)
+  /* TODO: Fetch shortened url from db.
+  If it doesn't exist send back response (url doesnt exist in database.) */
   const id = req.params.id;
   res.status(200).send(id);
 });
 
-app.get('/new/:url', (req, res) => {
-  // TODO: Check if url is correct, if it is create record in db and send back response.
-  // If not, send back error json response.
-  const url = req.params.url;
-  res.status(200).send(url);
+app.get('/new/*', (req, res) => {
+  /* https?:\/\/(www.)?([a-zA-Z0-9\-]){2,256}[\.]([a-z0-9]){2,6}
+  A regex like this would work for simple urls, but alot of
+  edge cases exist. */
+  const url = req.params[0];
+  console.log(req.params);
+  console.log(url);
+  if (isWebUri(url)) {
+    res.send(200);
+  } else {
+    res.send(JSON.stringify({ error: 'Please submit a valid url.' }));
+  }
 });
 
 app.listen(3000, () => {
