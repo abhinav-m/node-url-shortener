@@ -5,11 +5,15 @@ const fs = require('fs');
 
 const express = require('express');
 const { isWebUri } = require('valid-url');
+const { ObjectID } = require('mongodb');
+const bodyParser = require('body-parser');
+
+const { getUrls } = require('./db/models/Urls');
 
 const app = express();
 
 // Middleware to use json in server.
-// app.use(bodyParser.json());
+app.use(bodyParser.json());
 
 // Simple middleware to create log file.
 app.use((req, res, next) => {
@@ -26,11 +30,33 @@ app.use((req, res, next) => {
 // Middleware to serve static files
 app.use(express.static(path.join(__dirname, '../public')));
 
+app.get('/favicon.ico', (req, res) => {
+  res.status(204).send();
+});
+
 app.get('/:id', (req, res) => {
   /* TODO: Fetch shortened url from db.
   If it doesn't exist send back response (url doesnt exist in database.) */
+  console.log(req.params.id);
   const id = req.params.id;
-  res.status(200).send(id);
+  if (!ObjectID.isValid(id)) {
+    console.log('id is valid');
+    return res.send(404);
+  }
+  // TODO: Fix query by ID.
+  getUrls
+    .then(urlCollection => {
+      return urlCollection.findOne({ _id: id });
+    })
+    .then(doc => {
+      console.log(doc);
+      if (doc) {
+        res.redirect(doc.url);
+      } else {
+        res.status(200).send({ error: 'Invalid url' });
+      }
+    })
+    .catch(e => res.status(200).send({ error: 'Invalid url' }));
 });
 
 app.get('/new/*', (req, res) => {
@@ -38,10 +64,25 @@ app.get('/new/*', (req, res) => {
   A regex like this would work for simple urls, but alot of
   edge cases exist. */
   const url = req.params[0];
-  console.log(req.params);
-  console.log(url);
   if (isWebUri(url)) {
-    res.send(200);
+    getUrls
+      .then(urlCollection => {
+        const id = new ObjectID();
+
+        return urlCollection.insertOne({
+          _id: id,
+          url,
+          shortened_url: `localhost:3000/${id.toHexString()}`,
+          link_num: 1
+        });
+      })
+      .then(doc => {
+        res.status(200).send(doc);
+      })
+      .catch(e => {
+        console.log(e);
+        res.send(JSON.stringify({ error: 'Please submit a valid url.' }));
+      });
   } else {
     res.send(JSON.stringify({ error: 'Please submit a valid url.' }));
   }
