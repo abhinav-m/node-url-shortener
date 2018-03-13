@@ -1,4 +1,5 @@
 const { connect } = require('./client.js');
+const { schema } = require('./UrlSchema');
 
 const db = connect(process.env.DB_NAME);
 
