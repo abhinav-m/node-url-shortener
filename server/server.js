@@ -6,14 +6,12 @@ const fs = require('fs');
 const express = require('express');
 const { isWebUri } = require('valid-url');
 const { ObjectID } = require('mongodb');
-const bodyParser = require('body-parser');
 
 const { getUrls } = require('./db/models/Urls');
 
 const app = express();
 
 // Middleware to use json in server.
-app.use(bodyParser.json());
 
 // Simple middleware to create log file.
 app.use((req, res, next) => {
@@ -35,21 +33,19 @@ app.get('/favicon.ico', (req, res) => {
 });
 
 app.get('/:id', (req, res) => {
-  /* TODO: Fetch shortened url from db.
-  If it doesn't exist send back response (url doesnt exist in database.) */
+  /* TODO: Add a real shortened url instead of using id as the alternate short url */
   console.log(req.params.id);
   const id = req.params.id;
   if (!ObjectID.isValid(id)) {
-    console.log('id is valid');
     return res.send(404);
   }
-  // TODO: Fix query by ID.
+
   getUrls
     .then(urlCollection => {
-      return urlCollection.findOne({ _id: id });
+      // Remember to wrap id in ObjectID.
+      return urlCollection.findOne({ _id: ObjectID(id) });
     })
     .then(doc => {
-      console.log(doc);
       if (doc) {
         res.redirect(doc.url);
       } else {
@@ -65,19 +61,20 @@ app.get('/new/*', (req, res) => {
   edge cases exist. */
   const url = req.params[0];
   if (isWebUri(url)) {
+    // To refer to id in the shortened url
+    const id = new ObjectID();
     getUrls
       .then(urlCollection => {
-        const id = new ObjectID();
-
         return urlCollection.insertOne({
           _id: id,
           url,
-          shortened_url: `localhost:3000/${id.toHexString()}`,
+          short_url: `localhost:3000/${id.toHexString()}`, // eslint-disable-line
           link_num: 1
         });
       })
       .then(doc => {
-        res.status(200).send(doc);
+        const { url, short_url } = doc.ops[0];
+        res.status(200).send(JSON.stringify({ url, short_url }));
       })
       .catch(e => {
         console.log(e);
