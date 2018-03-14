@@ -2,13 +2,35 @@
 <html>
 
 <head>
-    <title>Belittl</title>
+    <title>Belittle | Url shortener</title>
     <meta charset="utf-8">
-
+    <link href="https://fonts.googleapis.com/css?family=Titillium+Web" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet">
 </head>
 
 <body>
-    <p>Served from statics.</p>
+    <h1>Belittle - A simple url shortener api.</h1>
+    <div class='exampleUsage'>
+        <h3>Example Usage:</h3>
+        <hr/>
+        <p>
+            https://belittle.herokuapp.com//https://www.github.com
+            <a href='https://belittle.herokuapp.com/new/https://www.github.com'>
+                <span>Go!</span>
+            </a>
+        </p>
+        <p>https://belittle.herokuapp.com/new/hghps://wss.github.com
+            <a href='https://belittle.herokuapp.com/new/hghps://wss.github.com'>
+                <span>Go!</span>
+            </a>
+        </p>
+    </div>
+    <div class='exampleOutput'>
+        <h3>Example Output:</h3>
+        <hr/>
+        <p>{url: "https://www.github.com", short_url: "https:/belittle.herokuapp.com/5" }</p>
+        <p>{ error: "Please submit a valid url." } </p>
+    </div>
 </body>
 
 </html>

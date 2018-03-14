@@ -54,7 +54,7 @@ app.get('/new/*', verifyUrlAndIncrement, (req, res) => {
     .then(urlCollection => {
       return urlCollection.insertOne({
         url: req.params[0],
-        short_url: `https:/belittle.herokuapp.com/${req.count}`,
+        short_url: `https://belittle.herokuapp.com/${req.count}`,
         link_num: req.count
       });
     })
